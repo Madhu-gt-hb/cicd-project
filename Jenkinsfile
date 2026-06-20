@@ -10,7 +10,7 @@ pipeline {
         SNAP_REPO = 'vprofile-snapshot'
         NEXUS_USER = 'admin'
         NEXUS_PASS = 'OneplusNew@12'
-        RELEASE_REPO = 'cicd-release'
+        RELEASE_REPO = 'vproapp'
         CENTRAL_REPO = 'cicd-maven-central'
 
         NEXUS_IP = '18.61.165.27'
