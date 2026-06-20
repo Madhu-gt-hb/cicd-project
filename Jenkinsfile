@@ -11,7 +11,7 @@ pipeline {
         NEXUS_PASS = 'OneplusNew@12'
         RELEASE_REPO = 'cicd-release'
         CENTRAL_REPO = 'cicd-maven-central'
-        NEXUS_IP = '172.31.27.31'
+        NEXUS_IP = '18.61.165.27'
         NEXUS_PORT = '8081'
         NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_LOGIN = 'nexuslogin'
