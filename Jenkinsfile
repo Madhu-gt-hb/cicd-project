@@ -8,13 +8,11 @@ pipeline {
 
     environment {
         SNAP_REPO = 'vprofile-snapshot'
-        NEXUS_USER = 'admin'
-        NEXUS_PASS = 'OneplusNew@12'
         RELEASE_REPO = 'cicd-release'
         CENTRAL_REPO = 'cicd-maven-central'
+
         NEXUS_IP = '18.61.165.27'
         NEXUS_PORT = '8081'
-        NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_LOGIN = 'Nexuslogin'
     }
 
@@ -22,11 +20,10 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn -s settings.xml -DskipTests install'
+                sh 'mvn -s settings.xml -DskipTests clean install'
             }
             post {
                 success {
-                    echo 'Archiving'
                     archiveArtifacts artifacts: '**/*.war'
                 }
             }
@@ -48,34 +45,46 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonarserver') {
                     sh '''
-                    mvn sonar:sonar \
-                    -Dsonar.projectKey=vprofile \
-                    -Dsonar.projectName=cicd-project \
-                    -Dsonar.projectVersion=1.0 \
-                    -Dsonar.sources=src/main/java \
-                    -Dsonar.tests=src/test/java \
-                    -Dsonar.java.binaries=target/classes
+                        mvn sonar:sonar \
+                        -Dsonar.projectKey=vprofile \
+                        -Dsonar.projectName=cicd-project \
+                        -Dsonar.projectVersion=1.0 \
+                        -Dsonar.sources=src/main/java \
+                        -Dsonar.tests=src/test/java \
+                        -Dsonar.java.binaries=target/classes
                     '''
                 }
             }
         }
-        stage ("Upload Artifact") {
+
+        stage('Upload Artifact to Nexus') {
             steps {
-                nexusArtifactUploader(
-                    nexusVersion: 'nexus3',
-                    protocol: 'http',
-                    nexusUrl: "${NEXUS_IP}:${NEXUS_PORT}",  
-                    groupId: 'QA',
-                    version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
-                    repository: "${RELEASE_REPO}",
-                    credentialsId: "${NEXUS_LOGIN}", 
-                    artifacts: [
-                        [artifactId: 'vproapp',
-                         classifier: '',
-                         file: 'target/vprofile-v2.war',
-                         type: 'war']
-                    ]
-                )
+                script {
+
+                    // ✅ SAFE VERSION FORMAT (NO SPACES, NO COLONS)
+                    def VERSION = new Date().format("yyyyMMdd-HHmmss")
+
+                    nexusArtifactUploader(
+                        nexusVersion: 'nexus3',
+                        protocol: 'http',
+                        nexusUrl: "${NEXUS_IP}:${NEXUS_PORT}",
+
+                        groupId: 'QA',
+                        version: "1.0-${VERSION}",
+
+                        repository: "${RELEASE_REPO}",
+                        credentialsId: "${NEXUS_LOGIN}",
+
+                        artifacts: [
+                            [
+                                artifactId: 'vproapp',
+                                classifier: '',
+                                file: 'target/vprofile-v2.war',
+                                type: 'war'
+                            ]
+                        ]
+                    )
+                }
             }
         }
     }
