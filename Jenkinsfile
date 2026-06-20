@@ -52,7 +52,9 @@ pipeline {
                     -Dsonar.projectKey=vprofile \
                     -Dsonar.projectName=cicd-project \
                     -Dsonar.projectVersion=1.0 \
-                    -Dsonar.sources=src/
+                    -Dsonar.sources=src/main/java \
+                    -Dsonar.tests=src/test/java \
+                    -Dsonar.java.binaries=target/classes
                     '''
                 }
             }
