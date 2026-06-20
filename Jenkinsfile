@@ -1,3 +1,7 @@
+def COLOR_MAP = [
+    'SUCCESS': 'good',
+    'FAILURE': 'danger',
+]
 pipeline {
     agent any
 
@@ -60,6 +64,13 @@ pipeline {
                 }
             }
         }
+        stage ("Quality Gate") {
+            steps {
+                timeout(time:1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
 
         stage('Upload Artifact') {
             steps {
@@ -89,6 +100,14 @@ pipeline {
                         ]
                     )
                 }
+            }
+        }
+        post {
+            always{
+                echo 'Slack Notifications'
+                slackSend channel: '#cicd',
+                    color: COLOR_MAP[currentBuild.currentResult],
+                    message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
             }
         }
     }
