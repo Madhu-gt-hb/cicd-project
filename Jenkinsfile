@@ -2,6 +2,7 @@ def COLOR_MAP = [
     'SUCCESS': 'good',
     'FAILURE': 'danger',
 ]
+
 pipeline {
     agent any
 
@@ -64,9 +65,10 @@ pipeline {
                 }
             }
         }
-        stage ("Quality Gate") {
+
+        stage('Quality Gate') {
             steps {
-                timeout(time:1, unit: 'HOURS') {
+                timeout(time: 1, unit: 'HOURS') {
                     waitForQualityGate abortPipeline: true
                 }
             }
@@ -76,7 +78,7 @@ pipeline {
             steps {
                 script {
 
-                    // ✅ SAFE VERSION (NO SPACES / NO TIMESTAMP ISSUES)
+                    // SAFE VERSION (NO SPACES / TIMESTAMP ISSUES)
                     def VERSION = new Date().format("yyyyMMdd-HHmmss")
 
                     nexusArtifactUploader(
@@ -102,13 +104,15 @@ pipeline {
                 }
             }
         }
-        post {
-            always{
-                echo 'Slack Notifications'
-                slackSend channel: '#cicd',
-                    color: COLOR_MAP[currentBuild.currentResult],
-                    message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
-            }
+    }
+
+    post {
+        always {
+            echo 'Slack Notifications'
+
+            slackSend channel: '#cicd',
+                color: COLOR_MAP[currentBuild.currentResult],
+                message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}\nMore info at: ${env.BUILD_URL}"
         }
     }
 }
