@@ -8,11 +8,14 @@ pipeline {
 
     environment {
         SNAP_REPO = 'vprofile-snapshot'
+        NEXUS_USER = 'admin'
+        NEXUS_PASS = 'OneplusNew@12'
         RELEASE_REPO = 'cicd-release'
         CENTRAL_REPO = 'cicd-maven-central'
 
         NEXUS_IP = '18.61.165.27'
         NEXUS_PORT = '8081'
+        NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_LOGIN = 'Nexuslogin'
     }
 
@@ -24,6 +27,7 @@ pipeline {
             }
             post {
                 success {
+                    echo 'Archiving WAR file'
                     archiveArtifacts artifacts: '**/*.war'
                 }
             }
@@ -57,11 +61,11 @@ pipeline {
             }
         }
 
-        stage('Upload Artifact to Nexus') {
+        stage('Upload Artifact') {
             steps {
                 script {
 
-                    // ✅ SAFE VERSION FORMAT (NO SPACES, NO COLONS)
+                    // ✅ SAFE VERSION (NO SPACES / NO TIMESTAMP ISSUES)
                     def VERSION = new Date().format("yyyyMMdd-HHmmss")
 
                     nexusArtifactUploader(
