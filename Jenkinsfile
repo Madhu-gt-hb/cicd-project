@@ -7,11 +7,11 @@ pipeline {
 
     environment {
         SNAP_REPO = 'vprofile-snapshot'
-        NEXUS_USER = 'thor'
-        NEXUS_PASS = 'thor123'
-        RELEASE_REPO = 'vprofile-release'
-        CENTRAL_REPO = 'vpro-maven-central'
-        NEXUS_IP = '172.31.1.78' // nexus server private ip
+        NEXUS_USER = 'admin'
+        NEXUS_PASS = 'OneplusNew@12'
+        RELEASE_REPO = 'cicd-release'
+        CENTRAL_REPO = 'cicd-maven-central'
+        NEXUS_IP = '172.31.27.31'
         NEXUS_PORT = '8081'
         NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_LOGIN = 'nexuslogin'
